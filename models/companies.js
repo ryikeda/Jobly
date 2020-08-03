@@ -45,7 +45,11 @@ class Company {
       baseQuery + whereExpressions.join(" AND ") + " ORDER BY name";
     const results = await db.query(finalQuery, queryValues);
 
-    return this.mapCompanies(results);
+    const companies = this.mapCompanies(results);
+
+    if (!companies.length) throw new ExpressError(`No company found`, 404);
+
+    return companies;
   }
 
   static async get(handle) {
