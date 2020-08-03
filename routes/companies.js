@@ -8,7 +8,7 @@ const router = new express.Router();
 router.get("/", async (req, res, next) => {
   try {
     const companies = await Company.findAll(req.query);
-    return res.json(companies);
+    return res.json({ companies });
   } catch (err) {
     return next(err);
   }
@@ -18,8 +18,26 @@ router.get("/", async (req, res, next) => {
 router.get("/:handle", async (req, res, next) => {
   try {
     const company = await Company.get(req.params.handle);
-    return res.json(company);
+    return res.json({ company });
   } catch (err) {
+    return next(err);
+  }
+});
+
+// // POST route
+// // Creates new company
+router.post("/", async (req, res, next) => {
+  try {
+    const company = await Company.create(req.body);
+    return res.status(201).json({ company });
+  } catch (err) {
+    // Check for duplicates
+    if (err.code === "23505") {
+      err = new ExpressError(
+        `A company with this handle ${req.body.handle} already exists`,
+        400
+      );
+    }
     return next(err);
   }
 });

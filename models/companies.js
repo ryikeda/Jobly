@@ -5,13 +5,13 @@ class Company {
   constructor(
     handle,
     name,
-    num_emlpoyees = null,
+    num_employees = null,
     description = null,
     logo_url = null
   ) {
     this.handle = handle;
     this.name = name;
-    this.num_emlpoyees = num_emlpoyees;
+    this.num_employees = num_employees;
     this.description = description;
     this.logo_url = logo_url;
   }
@@ -80,13 +80,13 @@ class Company {
       [
         data.handle,
         data.name,
-        data.num_emlpoyees,
+        data.num_employees,
         data.description,
         data.logo_url,
       ]
     );
-
     const company = this.mapCompanies(results);
+    return company;
   }
 
   static mapCompanies(results) {
@@ -95,13 +95,12 @@ class Company {
         new Company(
           company.handle,
           company.name,
-          company.num_emlpoyees,
+          company.num_employees,
           company.description,
           company.logo_url
         )
     );
   }
-  s;
 }
 
 module.exports = Company;
