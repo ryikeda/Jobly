@@ -3,13 +3,7 @@ const ExpressError = require("../helpers/expressError");
 const sqlForPartialUpdate = require("../helpers/partialUpdate");
 
 class Company {
-  constructor(
-    handle,
-    name,
-    num_employees = null,
-    description = null,
-    logo_url = null
-  ) {
+  constructor(handle, name, num_employees, description, logo_url) {
     this.handle = handle;
     this.name = name;
     this.num_employees = num_employees;
@@ -103,6 +97,18 @@ class Company {
       throw new ExpressError(`No company found under: ${handle}`, 404);
 
     return company;
+  }
+
+  static async remove(handle) {
+    const result = await db.query(
+      `
+    DELETE FROM companies WHERE handle = $1
+    RETURNING handle`,
+      [handle]
+    );
+    if (result.rows.length === 0) {
+      throw new ExpressError(`No company found under: ${handle}`, 404);
+    }
   }
 
   static mapCompanies(results) {
