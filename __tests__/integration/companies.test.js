@@ -117,3 +117,17 @@ describe("PATCH /companies/:handle", () => {
     expect(resp.statusCode).toBe(404);
   });
 });
+
+// DELETE route
+describe("DELETE /companies/:handle", () => {
+  test("Deletes a single company", async () => {
+    const resp = await request(app).delete(
+      `/companies/${TEST_DATA.currentCompany.handle}`
+    );
+    expect(resp.body).toEqual({ message: "Company deleted" });
+  });
+  test("Returns 404 if no match", async () => {
+    const resp = await request(app).delete(`/companies/notacompany`);
+    expect(resp.statusCode).toBe(404);
+  });
+});
