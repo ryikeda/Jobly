@@ -87,3 +87,33 @@ describe("POST /companies", () => {
     expect(resp.statusCode).toBe(400);
   });
 });
+
+// PATCH route
+describe("PATCH /companies/:handle", () => {
+  test("Updates a single company's name", async () => {
+    const resp = await request(app)
+      .patch(`/companies/${TEST_DATA.currentCompany.handle}`)
+      .send({
+        name: "patchTest",
+      });
+    expect(resp.body.company[0]).toHaveProperty("handle");
+    expect(resp.body.company[0].name).toBe("patchTest");
+    expect(resp.body.company[0].handle).not.toBe(null);
+  });
+
+  test("Prevents a bad company update", async () => {
+    const resp = await request(app)
+      .patch(`/companies/${TEST_DATA.currentCompany.handle}`)
+      .send({
+        invalid: "invalid",
+      });
+    expect(resp.statusCode).toBe(400);
+  });
+
+  test("Returns 404 if no match", async () => {
+    const resp = await request(app).patch(`/companies/notacompany`).send({
+      name: "patchTest",
+    });
+    expect(resp.statusCode).toBe(404);
+  });
+});
