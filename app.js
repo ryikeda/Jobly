@@ -9,12 +9,15 @@ const { DB_URI } = require("./config");
 
 const app = express();
 
-app.use(express.json());
+const companiesRoutes = require("./routes/companies");
 
-const db = require("./db");
+app.use(express.json());
 
 // add logging system
 app.use(morgan("tiny"));
+
+// Routes
+app.use("/companies", companiesRoutes);
 
 /** 404 handler */
 
