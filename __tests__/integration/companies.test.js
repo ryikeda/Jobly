@@ -43,4 +43,18 @@ describe("GET /companies", () => {
   });
 });
 
-describe("GET /companies/:handle", () => {});
+describe("GET /companies/:handle", () => {
+  test("Gets a single company", async () => {
+    const resp = await request(app).get(
+      `/companies/${TEST_DATA.currentCompany.handle}`
+    );
+    expect(resp.body.company[0]).toHaveProperty("handle");
+    expect(resp.body.company[0].handle).toEqual(
+      TEST_DATA.currentCompany.handle
+    );
+  });
+  test("Returns 404 if no match", async () => {
+    const resp = await request(app).get(`/companies/notacompany`);
+    expect(resp.body.status).toEqual(404);
+  });
+});
