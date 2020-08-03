@@ -2,6 +2,19 @@ const db = require("../db");
 const ExpressError = require("../helpers/expressError");
 
 class Company {
+  constructor(
+    handle,
+    name,
+    num_emlpoyees = null,
+    description = null,
+    logo_url = null
+  ) {
+    this.handle = handle;
+    this.name = name;
+    this.num_emlpoyees = num_emlpoyees;
+    this.description = description;
+    this.logo_url = logo_url;
+  }
   static async findAll(data) {
     let baseQuery = `SELECT handle, name FROM companies`;
     const whereExpressions = [];
@@ -35,9 +48,18 @@ class Company {
 
     const finalQuery =
       baseQuery + whereExpressions.join(" AND ") + " ORDER BY name";
-    const companiesRes = await db.query(finalQuery, queryValues);
-    console.log(finalQuery, queryValues);
-    return companiesRes.rows;
+    const results = await db.query(finalQuery, queryValues);
+
+    return results.rows.map(
+      (company) =>
+        new Company(
+          company.handle,
+          company.name,
+          company.num_emlpoyees,
+          company.description,
+          company.logo_url
+        )
+    );
   }
 
   static async get(handle) {
@@ -48,9 +70,18 @@ class Company {
       [handle]
     );
 
-    const company = resp.rows[0];
+    const company = resp.rows.map(
+      (company) =>
+        new Company(
+          company.handle,
+          company.name,
+          company.num_emlpoyees,
+          company.description,
+          company.logo_url
+        )
+    );
 
-    if (!company)
+    if (!company.length)
       throw new ExpressError(`No company found under: ${handle}`, 404);
 
     return company;
