@@ -58,3 +58,32 @@ describe("GET /companies/:handle", () => {
     expect(resp.body.status).toEqual(404);
   });
 });
+
+// POST route
+describe("POST /companies", () => {
+  test("Creates a new company", async () => {
+    const resp = await request(app).post("/companies").send({
+      handle: "postTest",
+      name: "postTest Inc",
+    });
+    expect(resp.statusCode).toBe(201);
+    expect(resp.body.company[0]).toHaveProperty("handle");
+    expect(resp.body.company[0].name).toEqual("postTest Inc");
+  });
+
+  test("Prevents from creating a duplicate company", async () => {
+    const { handle, name } = TEST_DATA.currentCompany;
+    const resp = await request(app).post("/companies").send({ handle, name });
+    expect(resp.statusCode).toBe(400);
+  });
+  test("Prevents from creating a with missing handle", async () => {
+    const { name } = TEST_DATA.currentCompany;
+    const resp = await request(app).post("/companies").send({ name });
+    expect(resp.statusCode).toBe(400);
+  });
+  test("Prevents from creating a with missing name", async () => {
+    const { handle } = TEST_DATA.currentCompany;
+    const resp = await request(app).post("/companies").send({ handle });
+    expect(resp.statusCode).toBe(400);
+  });
+});
