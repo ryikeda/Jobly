@@ -2,7 +2,9 @@ const express = require("express");
 const ExpressError = require("../helpers/expressError");
 const Company = require("../models/companies");
 const router = new express.Router();
-
+const { validate } = require("jsonschema");
+const companyNewSchema = require("../schemas/companyNew.json");
+const companyUpdateSchema = require("../schemas/companyUpdate.json");
 // GET routes
 // Returns a list of all companies, allows for queries
 router.get("/", async (req, res, next) => {
@@ -28,6 +30,13 @@ router.get("/:handle", async (req, res, next) => {
 // Creates new company
 router.post("/", async (req, res, next) => {
   try {
+    const validation = validate(req.body, companyNewSchema);
+    if (!validation.valid) {
+      throw new ExpressError(
+        validation.errors.map((e) => e.stack),
+        400
+      );
+    }
     const company = await Company.create(req.body);
     return res.status(201).json({ company });
   } catch (err) {
@@ -46,6 +55,13 @@ router.post("/", async (req, res, next) => {
 // Updates a company
 router.patch("/:handle", async (req, res, next) => {
   try {
+    const validation = validate(req.body, companyUpdateSchema);
+    if (!validation.valid) {
+      throw new ExpressError(
+        validation.errors.map((e) => e.stack),
+        400
+      );
+    }
     const company = await Company.update(req.params.handle, req.body);
     return res.json({ company });
   } catch (err) {
