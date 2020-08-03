@@ -39,6 +39,22 @@ class Company {
     console.log(finalQuery, queryValues);
     return companiesRes.rows;
   }
+
+  static async get(handle) {
+    const resp = await db.query(
+      `
+    SELECT handle, name, num_employees, description, logo_url FROM companies
+    WHERE handle = $1`,
+      [handle]
+    );
+
+    const company = resp.rows[0];
+
+    if (!company)
+      throw new ExpressError(`No company found under: ${handle}`, 404);
+
+    return company;
+  }
 }
 
 module.exports = Company;
