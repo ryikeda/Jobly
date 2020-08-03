@@ -1,5 +1,6 @@
 const db = require("../db");
 const ExpressError = require("../helpers/expressError");
+const sqlForPartialUpdate = require("../helpers/partialUpdate");
 
 class Company {
   constructor(
@@ -86,6 +87,21 @@ class Company {
       ]
     );
     const company = this.mapCompanies(results);
+    return company;
+  }
+
+  static async update(handle, data) {
+    let { query, values } = sqlForPartialUpdate(
+      "companies",
+      data,
+      "handle",
+      handle
+    );
+    const results = await db.query(query, values);
+    const company = this.mapCompanies(results);
+    if (!company.length)
+      throw new ExpressError(`No company found under: ${handle}`, 404);
+
     return company;
   }
 

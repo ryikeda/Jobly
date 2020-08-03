@@ -24,8 +24,8 @@ router.get("/:handle", async (req, res, next) => {
   }
 });
 
-// // POST route
-// // Creates new company
+// POST route
+// Creates new company
 router.post("/", async (req, res, next) => {
   try {
     const company = await Company.create(req.body);
@@ -38,6 +38,17 @@ router.post("/", async (req, res, next) => {
         400
       );
     }
+    return next(err);
+  }
+});
+
+// PACTH route
+// Updates a company
+router.patch("/:handle", async (req, res, next) => {
+  try {
+    const company = await Company.update(req.params.handle, req.body);
+    return res.json({ company });
+  } catch (err) {
     return next(err);
   }
 });
