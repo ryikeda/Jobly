@@ -50,6 +50,46 @@ class Company {
       baseQuery + whereExpressions.join(" AND ") + " ORDER BY name";
     const results = await db.query(finalQuery, queryValues);
 
+    return this.mapCompanies(results);
+  }
+
+  static async get(handle) {
+    const results = await db.query(
+      `
+    SELECT handle, name, num_employees, description, logo_url FROM companies
+    WHERE handle = $1`,
+      [handle]
+    );
+
+    const company = this.mapCompanies(results);
+
+    if (!company.length)
+      throw new ExpressError(`No company found under: ${handle}`, 404);
+
+    return company;
+  }
+
+  static async create(data) {
+    const results = await db.query(
+      `
+    INSERT INTO companies 
+    (handle, name, num_employees, description, logo_url)
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING 
+    handle, name, num_employees, description, logo_url`,
+      [
+        data.handle,
+        data.name,
+        data.num_emlpoyees,
+        data.description,
+        data.logo_url,
+      ]
+    );
+
+    const company = this.mapCompanies(results);
+  }
+
+  static mapCompanies(results) {
     return results.rows.map(
       (company) =>
         new Company(
@@ -61,31 +101,7 @@ class Company {
         )
     );
   }
-
-  static async get(handle) {
-    const resp = await db.query(
-      `
-    SELECT handle, name, num_employees, description, logo_url FROM companies
-    WHERE handle = $1`,
-      [handle]
-    );
-
-    const company = resp.rows.map(
-      (company) =>
-        new Company(
-          company.handle,
-          company.name,
-          company.num_emlpoyees,
-          company.description,
-          company.logo_url
-        )
-    );
-
-    if (!company.length)
-      throw new ExpressError(`No company found under: ${handle}`, 404);
-
-    return company;
-  }
+  s;
 }
 
 module.exports = Company;
