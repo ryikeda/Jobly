@@ -48,10 +48,8 @@ describe("GET /companies/:handle", () => {
     const resp = await request(app).get(
       `/companies/${TEST_DATA.currentCompany.handle}`
     );
-    expect(resp.body.company[0]).toHaveProperty("handle");
-    expect(resp.body.company[0].handle).toEqual(
-      TEST_DATA.currentCompany.handle
-    );
+    expect(resp.body.company).toHaveProperty("handle");
+    expect(resp.body.company.handle).toEqual(TEST_DATA.currentCompany.handle);
   });
   test("Returns 404 if no match", async () => {
     const resp = await request(app).get(`/companies/notacompany`);
@@ -67,8 +65,8 @@ describe("POST /companies", () => {
       name: "postTest Inc",
     });
     expect(resp.statusCode).toBe(201);
-    expect(resp.body.company[0]).toHaveProperty("handle");
-    expect(resp.body.company[0].name).toEqual("postTest Inc");
+    expect(resp.body.company).toHaveProperty("handle");
+    expect(resp.body.company.name).toEqual("postTest Inc");
   });
 
   test("Prevents from creating a duplicate company", async () => {
@@ -96,9 +94,9 @@ describe("PATCH /companies/:handle", () => {
       .send({
         name: "patchTest",
       });
-    expect(resp.body.company[0]).toHaveProperty("handle");
-    expect(resp.body.company[0].name).toBe("patchTest");
-    expect(resp.body.company[0].handle).not.toBe(null);
+    expect(resp.body.company).toHaveProperty("handle");
+    expect(resp.body.company.name).toBe("patchTest");
+    expect(resp.body.company.handle).not.toBe(null);
   });
 
   test("Prevents a bad company update", async () => {

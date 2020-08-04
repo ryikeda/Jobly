@@ -60,9 +60,9 @@ class Company {
       [handle]
     );
 
-    const company = this.mapCompanies(results);
+    const company = this.mapCompanies(results)[0];
 
-    if (!company.length)
+    if (!company)
       throw new ExpressError(`No company found under: ${handle}`, 404);
 
     return company;
@@ -84,7 +84,7 @@ class Company {
         data.logo_url,
       ]
     );
-    const company = this.mapCompanies(results);
+    const company = this.mapCompanies(results)[0];
     return company;
   }
 
@@ -96,8 +96,8 @@ class Company {
       handle
     );
     const results = await db.query(query, values);
-    const company = this.mapCompanies(results);
-    if (!company.length)
+    const company = this.mapCompanies(results)[0];
+    if (!company)
       throw new ExpressError(`No company found under: ${handle}`, 404);
 
     return company;
