@@ -109,3 +109,15 @@ describe("PATCH /jobs/:id", () => {
     expect(resp.statusCode).toBe(404);
   });
 });
+
+// DELETE route
+describe("DELETE /jobs/:id", () => {
+  test("Deletes a single company", async () => {
+    const resp = await request(app).delete(`/jobs/${TEST_DATA.job.id}`);
+    expect(resp.body).toEqual({ message: "Job deleted" });
+  });
+  test("Returns 404 if no match", async () => {
+    const resp = await request(app).delete(`/jobs/0`);
+    expect(resp.statusCode).toBe(404);
+  });
+});
