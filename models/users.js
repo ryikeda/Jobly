@@ -88,6 +88,16 @@ class User {
 
     return user;
   }
+  static async remove(username) {
+    const result = await db.query(
+      `
+    DELETE FROM users WHERE username=$1
+    RETURNING username`,
+      [username]
+    );
+    if (!result.rows.length)
+      throw new ExpressError(`No user found under username :${username}`, 404);
+  }
 
   static mapUsers(results) {
     return results.rows.map(

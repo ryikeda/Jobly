@@ -62,4 +62,15 @@ router.patch("/:username", async (req, res, next) => {
   }
 });
 
+// DELETE route
+// Deletes a user
+router.delete("/:username", async (req, res, next) => {
+  try {
+    await User.remove(req.params.username);
+    return res.json({ message: "User deleted" });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 module.exports = router;
