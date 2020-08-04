@@ -26,15 +26,21 @@ class User {
         FROM users
         ORDER BY username`
     );
-    const users = this.mapUsers(result);
-    return users;
+    return result.rows;
   }
 
-  static mapUsers(results) {
-    return results.rows.map(
-      (user) =>
-        new User(user.username, user.first_name, user.last_name, user.email)
+  static async get(username) {
+    const result = await db.query(
+      `SELECT username, first_name, last_name, email, photo_url 
+      FROM users 
+      WHERE username = $1`,
+      [username]
     );
+    const user = result.rows[0];
+    if (!user)
+      throw new ExpressError(`No user found under username: ${username}`, 404);
+
+    return user;
   }
 }
 module.exports = User;

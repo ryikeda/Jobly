@@ -15,4 +15,14 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+// Returns a user based on username
+router.get("/:username", async (req, res, next) => {
+  try {
+    const user = await User.get(req.params.username);
+    return res.json({ user });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 module.exports = router;
