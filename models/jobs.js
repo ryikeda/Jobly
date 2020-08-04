@@ -44,16 +44,29 @@ class Job {
   }
 
   static async get(id) {
-    const resp = await db.query(
+    const result = await db.query(
       `
     SELECT id, title, salary, equity, company_handle
     FROM jobs WHERE id=$1`,
       [id]
     );
-    const job = this.mapJobs(resp);
-    if (!job.length)
-      throw new ExpressError(`No job found under id :${id}`, 404);
+    const job = this.mapJobs(result)[0];
+    if (!job.id) throw new ExpressError(`No job found under id :${id}`, 404);
 
+    return job;
+  }
+
+  static async create(data) {
+    const results = await db.query(
+      `
+    INSERT INTO jobs 
+    (title, salary, equity, company_handle)
+    VALUES ($1, $2, $3, $4)
+    RETURNING 
+    id, title, salary, equity, company_handle`,
+      [data.title, data.salary, data.equity, data.company_handle]
+    );
+    const job = this.mapJobs(results)[0];
     return job;
   }
 
