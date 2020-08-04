@@ -5,6 +5,7 @@ CREATE DATABASE jobly;
 
 DROP TABLE IF EXISTS companies;
 DROP TABLE IF EXISTS jobs;
+DROP TABLE IF EXISTS users;
 
 CREATE TABLE companies(
     handle TEXT PRIMARY KEY,
@@ -22,6 +23,17 @@ CREATE TABLE jobs(
     company_handle TEXT NOT NULL REFERENCES companies ON DELETE CASCADE
 );
 
+CREATE TABLE users(
+    username TEXT PRIMARY KEY,
+    password TEXT NOT NULL,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    photo_url TEXT,
+    is_admin BOOLEAN NOT NULL default FALSE
+);
+
+
 -- SAMPLE DATA
 INSERT INTO companies 
 VALUES
@@ -34,3 +46,8 @@ VALUES
  ('engineer', 100000, 'apple',0.01),
  ('software engineer', 120000, 'apple',0.02),
  ('data scientist', 200000, 'google',0.01);
+
+ INSERT INTO users
+ (username, password, first_name, last_name, email)
+ VALUES
+ ('user', 'password', 'John','Doe','johndoe@email.com')
