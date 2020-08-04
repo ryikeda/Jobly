@@ -4,6 +4,7 @@ const Job = require("../models/jobs");
 const router = new express.Router();
 const { validate } = require("jsonschema");
 const jobNewSchema = require("../schemas/jobNew.json");
+const jobUpdateSchema = require("../schemas/jobNew.json");
 
 // GET routes
 // Returns a list with jobs
@@ -36,7 +37,25 @@ router.post("/", async (req, res, next) => {
         400
       );
     }
-    const job = await Job.create(req.body);
+    const job = await Job.create(req.para.id, req.body);
+    return res.json({ job });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+// PATCH route
+// Updates a job
+router.patch("/:id", async (req, res, next) => {
+  try {
+    const validation = validate(req.body, jobUpdateSchema);
+    if (!validation.valid) {
+      throw new ExpressError(
+        validation.errors.map((e) => e.stack),
+        400
+      );
+    }
+    const job = await Job.update(req.params.id, req.body);
     return res.json({ job });
   } catch (err) {
     return next(err);

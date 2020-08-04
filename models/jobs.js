@@ -1,5 +1,6 @@
 const db = require("../db");
 const ExpressError = require("../helpers/expressError");
+const sqlForPartialUpdate = require("../helpers/partialUpdate");
 
 class Job {
   constructor(id, title, salary, equity, company_handle) {
@@ -67,6 +68,17 @@ class Job {
       [data.title, data.salary, data.equity, data.company_handle]
     );
     const job = this.mapJobs(results)[0];
+    return job;
+  }
+
+  static async update(id, data) {
+    let { query, values } = sqlForPartialUpdate("jobs", data, "id", id);
+
+    const result = await db.query(query, values);
+    const job = result.rows[0];
+
+    if (!job) throw new ExpressError(`No job found under id :${id}`, 404);
+
     return job;
   }
 
