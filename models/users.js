@@ -22,6 +22,26 @@ class User {
     this.photo_url = photo_url;
     this.is_admin = is_admin;
   }
+
+  static async authenticate(data) {
+    const result = await db.query(
+      `
+    SELECT username, password, first_name, last_name, email, photo_url, is_admin
+    FROM users WHERE username=$1`,
+      [data.username]
+    );
+
+    const user = this.mapUsers(result)[0];
+    if (user) {
+      // compare hashed password to a new hash from password
+      const isValid = await bcrypt.compare(data.password, user.password);
+      if (isValid) {
+        return user;
+      }
+    }
+
+    throw new ExpressError("Invalid Password", 401);
+  }
   static async findAll() {
     const result = await db.query(
       `SELECT username, first_name, last_name, email
