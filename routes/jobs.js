@@ -18,13 +18,6 @@ router.get("/", async (req, res, next) => {
 // Return one job
 router.get("/:id", async (req, res, next) => {
   try {
-    const validation = validate(req.body, jobNewSchema);
-    if (!validation.valid) {
-      throw new ExpressError(
-        validation.errors.map((e) => e.stack),
-        400
-      );
-    }
     const job = await Job.get(req.params.id);
     return res.json({ job });
   } catch (err) {
@@ -36,6 +29,13 @@ router.get("/:id", async (req, res, next) => {
 // Creates a new job
 router.post("/", async (req, res, next) => {
   try {
+    const validation = validate(req.body, jobNewSchema);
+    if (!validation.valid) {
+      throw new ExpressError(
+        validation.errors.map((e) => e.stack),
+        400
+      );
+    }
     const job = await Job.create(req.body);
     return res.json({ job });
   } catch (err) {

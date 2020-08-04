@@ -51,7 +51,7 @@ class Job {
       [id]
     );
     const job = this.mapJobs(result)[0];
-    if (!job.id) throw new ExpressError(`No job found under id :${id}`, 404);
+    if (!job) throw new ExpressError(`No job found under id :${id}`, 404);
 
     return job;
   }
