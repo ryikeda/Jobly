@@ -28,7 +28,10 @@ class User {
         FROM users
         ORDER BY username`
     );
-    return result.rows;
+
+    const users = this.mapUsers(result);
+
+    return users;
   }
 
   static async get(username) {
@@ -38,7 +41,7 @@ class User {
       WHERE username = $1`,
       [username]
     );
-    const user = result.rows[0];
+    const user = this.mapUsers(result)[0];
     if (!user)
       throw new ExpressError(`No user found under username: ${username}`, 404);
 
@@ -62,9 +65,10 @@ class User {
         data.photo_url,
       ]
     );
-    const user = results.rows[0];
+    const user = this.mapUsers(results)[0];
     return user;
   }
+
   static async update(username, data) {
     let { query, values } = sqlForPartialUpdate(
       "users",
