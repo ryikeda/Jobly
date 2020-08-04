@@ -82,6 +82,17 @@ class Job {
     return job;
   }
 
+  static async remove(id) {
+    const result = await db.query(
+      `
+    DELETE FROM jobs WHERE id=$1
+    RETURNING id`,
+      [id]
+    );
+    if (!result.rows.length)
+      throw new ExpressError(`No job found under id :${id}`, 404);
+  }
+
   static mapJobs(results) {
     return results.rows.map(
       (job) =>

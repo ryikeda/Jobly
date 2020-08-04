@@ -62,4 +62,15 @@ router.patch("/:id", async (req, res, next) => {
   }
 });
 
+// DELETE route
+// Delets a job
+router.delete("/:id", async (req, res, next) => {
+  try {
+    await Job.remove(req.params.id);
+    return res.json({ message: "Job deleted" });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 module.exports = router;
