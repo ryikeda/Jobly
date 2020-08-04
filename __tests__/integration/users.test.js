@@ -109,3 +109,15 @@ describe("PATCH /users/:username", () => {
     expect(resp.statusCode).toBe(404);
   });
 });
+
+// DELETE route
+describe("DELETE /users/:id", () => {
+  test("Deletes a single user", async () => {
+    const resp = await request(app).delete(`/users/${TEST_DATA.user.username}`);
+    expect(resp.body).toEqual({ message: "User deleted" });
+  });
+  test("Returns 404 if no match", async () => {
+    const resp = await request(app).delete(`/users/notauser`);
+    expect(resp.statusCode).toBe(404);
+  });
+});
