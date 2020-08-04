@@ -77,3 +77,35 @@ describe("POST /users", () => {
     expect(resp.statusCode).toBe(400);
   });
 });
+
+// PATCH route
+describe("PATCH /users/:username", () => {
+  test("Updates a single user", async () => {
+    const resp = await request(app)
+      .patch(`/users/${TEST_DATA.user.username}`)
+      .send({
+        first_name: "updatedFirst",
+        last_name: "updatedLast",
+        email: "updatedEmail@email.com",
+      });
+    const user = resp.body.user;
+    expect(user.username).not.toBe(null);
+    expect(user.first_name).toBe("updatedFirst");
+    expect(user.last_name).toBe("updatedLast");
+    expect(user.email).toBe("updatedEmail@email.com");
+  });
+
+  test("Prevents a bad user update", async () => {
+    const resp = await request(app).patch(`/users/${TEST_DATA.username}`).send({
+      invalid: "invalid",
+    });
+    expect(resp.statusCode).toBe(400);
+  });
+
+  test("Returns 404 if no match", async () => {
+    const resp = await request(app).patch(`/users/notauser`).send({
+      first_name: "notauser",
+    });
+    expect(resp.statusCode).toBe(404);
+  });
+});
