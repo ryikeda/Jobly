@@ -4,7 +4,7 @@ const Job = require("../models/jobs");
 const router = new express.Router();
 const { validate } = require("jsonschema");
 const jobNewSchema = require("../schemas/jobNew.json");
-const jobUpdateSchema = require("../schemas/jobNew.json");
+const jobUpdateSchema = require("../schemas/jobUpdate.json");
 
 // GET routes
 // Returns a list with jobs

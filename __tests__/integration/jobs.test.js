@@ -81,3 +81,31 @@ describe("POST /jobs", () => {
     expect(resp.statusCode).toBe(400);
   });
 });
+
+// PATCH route
+describe("PATCH /jobs/:id", () => {
+  test("Updates a single job's title", async () => {
+    const resp = await request(app).patch(`/jobs/${TEST_DATA.job.id}`).send({
+      title: "updatedTitle",
+    });
+    const job = resp.body.job;
+    expect(job.title).toBe("updatedTitle");
+    expect(job.equity).not.toBe(null);
+    expect(job.salary).not.toBe(null);
+    expect(job.company_handle).not.toBe(null);
+  });
+
+  test("Prevents a bad job update", async () => {
+    const resp = await request(app).patch(`/jobs/${TEST_DATA.job.id}`).send({
+      invalid: "invalid",
+    });
+    expect(resp.statusCode).toBe(500);
+  });
+
+  test("Returns 404 if no match", async () => {
+    const resp = await request(app).patch(`/jobs/0`).send({
+      title: "patchTest",
+    });
+    expect(resp.statusCode).toBe(404);
+  });
+});
