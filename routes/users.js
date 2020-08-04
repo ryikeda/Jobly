@@ -4,6 +4,7 @@ const User = require("../models/users");
 const router = new express.Router();
 const { validate } = require("jsonschema");
 const userNewSchema = require("../schemas/usersNew.json");
+const userUpdateSchema = require("../schemas/usersUpdate.json");
 
 // GET routes
 // Returns a list with users
@@ -38,6 +39,24 @@ router.post("/", async (req, res, next) => {
     }
     const user = await User.register(req.body);
     return res.status(201).json({ user });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+// PATCH route
+router.patch("/:username", async (req, res, next) => {
+  try {
+    const validation = validate(req.body, userUpdateSchema);
+    if (!validation.valid) {
+      throw new ExpressError(
+        validation.errors.map((e) => e.stack),
+        400
+      );
+    }
+
+    const user = await User.update(req.params.username, req.body);
+    return res.json({ user });
   } catch (err) {
     return next(err);
   }

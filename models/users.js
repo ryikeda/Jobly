@@ -65,5 +65,39 @@ class User {
     const user = results.rows[0];
     return user;
   }
+  static async update(username, data) {
+    let { query, values } = sqlForPartialUpdate(
+      "users",
+      data,
+      "username",
+      username
+    );
+
+    const result = await db.query(query, values);
+    const user = this.mapUsers(result)[0];
+
+    if (!user)
+      throw new ExpressError(`No user found under username :${username}`, 404);
+
+    delete user.password;
+    delete user.is_admin;
+
+    return user;
+  }
+
+  static mapUsers(results) {
+    return results.rows.map(
+      (user) =>
+        new User(
+          user.username,
+          user.password,
+          user.first_name,
+          user.last_name,
+          user.email,
+          user.photo_url,
+          user.is_admin
+        )
+    );
+  }
 }
 module.exports = User;
