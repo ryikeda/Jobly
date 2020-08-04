@@ -1,6 +1,8 @@
 const db = require("../db");
 const ExpressError = require("../helpers/expressError");
 const sqlForPartialUpdate = require("../helpers/partialUpdate");
+const bcrypt = require("bcrypt");
+const { BCRYPT_WORK_FACTOR } = require("../config");
 
 class User {
   constructor(
@@ -40,6 +42,27 @@ class User {
     if (!user)
       throw new ExpressError(`No user found under username: ${username}`, 404);
 
+    return user;
+  }
+  static async register(data) {
+    const hashedPassword = await bcrypt.hash(data.password, BCRYPT_WORK_FACTOR);
+    const results = await db.query(
+      `
+    INSERT INTO users
+    (username, password, first_name, last_name, email, photo_url)
+    VALUES ($1, $2, $3, $4, $5, $6)
+    RETURNING username, first_name, last_name, email, photo_url
+    `,
+      [
+        data.username,
+        hashedPassword,
+        data.first_name,
+        data.last_name,
+        data.email,
+        data.photo_url,
+      ]
+    );
+    const user = results.rows[0];
     return user;
   }
 }

@@ -3,6 +3,7 @@ const ExpressError = require("../helpers/expressError");
 const User = require("../models/users");
 const router = new express.Router();
 const { validate } = require("jsonschema");
+const userNewSchema = require("../schemas/usersNew.json");
 
 // GET routes
 // Returns a list with users
@@ -20,6 +21,23 @@ router.get("/:username", async (req, res, next) => {
   try {
     const user = await User.get(req.params.username);
     return res.json({ user });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+// POST route
+router.post("/", async (req, res, next) => {
+  try {
+    const validation = validate(req.body, userNewSchema);
+    if (!validation.valid) {
+      throw new ExpressError(
+        validation.errors.map((e) => e.stack),
+        400
+      );
+    }
+    const user = await User.register(req.body);
+    return res.status(201).json({ user });
   } catch (err) {
     return next(err);
   }
