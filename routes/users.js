@@ -5,6 +5,7 @@ const router = new express.Router();
 const { validate } = require("jsonschema");
 const userNewSchema = require("../schemas/usersNew.json");
 const userUpdateSchema = require("../schemas/usersUpdate.json");
+const createToken = require("../helpers/createToken");
 
 // GET routes
 // Returns a list with users
@@ -38,7 +39,8 @@ router.post("/", async (req, res, next) => {
       );
     }
     const user = await User.register(req.body);
-    return res.status(201).json({ user });
+    const token = createToken(user);
+    return res.status(201).json({ token });
   } catch (err) {
     return next(err);
   }

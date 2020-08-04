@@ -74,7 +74,7 @@ class User {
     INSERT INTO users
     (username, password, first_name, last_name, email, photo_url)
     VALUES ($1, $2, $3, $4, $5, $6)
-    RETURNING username, first_name, last_name, email, photo_url
+    RETURNING username, is_admin 
     `,
       [
         data.username,
