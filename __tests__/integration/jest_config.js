@@ -14,6 +14,16 @@ const setupBeforeTest = async (TEST_DATA) => {
     );
     // Add to TEST_DATA to be exported
     TEST_DATA.currentCompany = companiesRes.rows[0];
+
+    // Create Sample data for jobs
+    const jobsRes = await db.query(
+      `
+    INSERT INTO jobs (title, salary, equity, company_handle)
+    VALUES ($1, $2, $3, $4)
+    RETURNING *`,
+      ["software engineer", "110000", 0.01, TEST_DATA.currentCompany.handle]
+    );
+    TEST_DATA.job = jobsRes.rows[0];
   } catch (err) {
     console.log(err);
   }
