@@ -42,6 +42,13 @@
       "minLength": 1,
       "maxLength": 50,
       "examples": ["apple"]
+    },
+    "_token": {
+      "$id": "/properties/token",
+      "type": "string",
+      "title": "The Token Schema ",
+      "default": "",
+      "examples": ["foo"]
     }
   },
   "additionalProperties": false

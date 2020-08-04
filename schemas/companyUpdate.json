@@ -56,6 +56,13 @@
       "minLength": 1,
       "maxLength": 300,
       "examples": ["logo.com/tesla"]
+    },
+    "_token": {
+      "$id": "/properties/token",
+      "type": "string",
+      "title": "The Token Schema ",
+      "default": "",
+      "examples": ["foo"]
     }
   },
   "additionalProperties": false

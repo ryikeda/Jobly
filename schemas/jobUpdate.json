@@ -43,6 +43,13 @@
       "description": "An explanation about the purpose of this instance.",
       "default": "",
       "examples": ["apple"]
+    },
+    "_token": {
+      "$id": "/properties/token",
+      "type": "string",
+      "title": "The Token Schema ",
+      "default": "",
+      "examples": ["foo"]
     }
   },
   "additionalProperties": true

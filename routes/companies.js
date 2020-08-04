@@ -5,9 +5,10 @@ const router = new express.Router();
 const { validate } = require("jsonschema");
 const companyNewSchema = require("../schemas/companyNew.json");
 const companyUpdateSchema = require("../schemas/companyUpdate.json");
+const { adminRequired, authRequired } = require("../middleware/auth");
 // GET routes
 // Returns a list of all companies, allows for queries
-router.get("/", async (req, res, next) => {
+router.get("/", authRequired, async (req, res, next) => {
   try {
     const companies = await Company.findAll(req.query);
     return res.json({ companies });
@@ -17,7 +18,7 @@ router.get("/", async (req, res, next) => {
 });
 
 // Returns a company based on handle
-router.get("/:handle", async (req, res, next) => {
+router.get("/:handle", authRequired, async (req, res, next) => {
   try {
     const company = await Company.get(req.params.handle);
     return res.json({ company });
@@ -28,7 +29,7 @@ router.get("/:handle", async (req, res, next) => {
 
 // POST route
 // Creates new company
-router.post("/", async (req, res, next) => {
+router.post("/", adminRequired, async (req, res, next) => {
   try {
     const validation = validate(req.body, companyNewSchema);
     if (!validation.valid) {
@@ -53,7 +54,7 @@ router.post("/", async (req, res, next) => {
 
 // PACTH route
 // Updates a company
-router.patch("/:handle", async (req, res, next) => {
+router.patch("/:handle", adminRequired, async (req, res, next) => {
   try {
     const validation = validate(req.body, companyUpdateSchema);
     if (!validation.valid) {
@@ -72,7 +73,7 @@ router.patch("/:handle", async (req, res, next) => {
 // DELETE route
 // Deletes a company
 
-router.delete("/:handle", async (req, res, next) => {
+router.delete("/:handle", adminRequired, async (req, res, next) => {
   try {
     await Company.remove(req.params.handle);
     return res.json({ message: "Company deleted" });

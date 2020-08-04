@@ -6,10 +6,12 @@ const { validate } = require("jsonschema");
 const userNewSchema = require("../schemas/usersNew.json");
 const userUpdateSchema = require("../schemas/usersUpdate.json");
 const createToken = require("../helpers/createToken");
+const auth = require("../middleware/auth");
+const { confirmUser, authRequired } = require("../middleware/auth");
 
 // GET routes
 // Returns a list with users
-router.get("/", async (req, res, next) => {
+router.get("/", authRequired, async (req, res, next) => {
   try {
     const users = await User.findAll(req.query);
     return res.json({ users });
@@ -19,7 +21,7 @@ router.get("/", async (req, res, next) => {
 });
 
 // Returns a user based on username
-router.get("/:username", async (req, res, next) => {
+router.get("/:username", authRequired, async (req, res, next) => {
   try {
     const user = await User.get(req.params.username);
     return res.json({ user });
@@ -47,7 +49,7 @@ router.post("/", async (req, res, next) => {
 });
 
 // PATCH route
-router.patch("/:username", async (req, res, next) => {
+router.patch("/:username", confirmUser, async (req, res, next) => {
   try {
     const validation = validate(req.body, userUpdateSchema);
     if (!validation.valid) {
@@ -66,7 +68,7 @@ router.patch("/:username", async (req, res, next) => {
 
 // DELETE route
 // Deletes a user
-router.delete("/:username", async (req, res, next) => {
+router.delete("/:username", confirmUser, async (req, res, next) => {
   try {
     await User.remove(req.params.username);
     return res.json({ message: "User deleted" });

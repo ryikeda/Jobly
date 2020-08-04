@@ -3,12 +3,13 @@ const ExpressError = require("../helpers/expressError");
 const Job = require("../models/jobs");
 const router = new express.Router();
 const { validate } = require("jsonschema");
+const { adminRequired, authRequired } = require("../middleware/auth");
 const jobNewSchema = require("../schemas/jobNew.json");
 const jobUpdateSchema = require("../schemas/jobUpdate.json");
 
 // GET routes
 // Returns a list with jobs
-router.get("/", async (req, res, next) => {
+router.get("/", authRequired, async (req, res, next) => {
   try {
     const jobs = await Job.findAll(req.query);
     return res.json({ jobs });
@@ -17,7 +18,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 // Return one job
-router.get("/:id", async (req, res, next) => {
+router.get("/:id", authRequired, async (req, res, next) => {
   try {
     const job = await Job.get(req.params.id);
     return res.json({ job });
@@ -28,7 +29,7 @@ router.get("/:id", async (req, res, next) => {
 
 // POST route
 // Creates a new job
-router.post("/", async (req, res, next) => {
+router.post("/", adminRequired, async (req, res, next) => {
   try {
     const validation = validate(req.body, jobNewSchema);
     if (!validation.valid) {
@@ -46,7 +47,7 @@ router.post("/", async (req, res, next) => {
 
 // PATCH route
 // Updates a job
-router.patch("/:id", async (req, res, next) => {
+router.patch("/:id", adminRequired, async (req, res, next) => {
   try {
     const validation = validate(req.body, jobUpdateSchema);
     if (!validation.valid) {
@@ -64,7 +65,7 @@ router.patch("/:id", async (req, res, next) => {
 
 // DELETE route
 // Delets a job
-router.delete("/:id", async (req, res, next) => {
+router.delete("/:id", adminRequired, async (req, res, next) => {
   try {
     await Job.remove(req.params.id);
     return res.json({ message: "Job deleted" });
