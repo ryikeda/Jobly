@@ -37,8 +37,8 @@ router.post("/", async (req, res, next) => {
         400
       );
     }
-    const job = await Job.create(req.para.id, req.body);
-    return res.json({ job });
+    const job = await Job.create(req.body);
+    return res.status(201).json({ job });
   } catch (err) {
     return next(err);
   }
