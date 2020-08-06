@@ -33,6 +33,15 @@ CREATE TABLE users(
     is_admin BOOLEAN NOT NULL default FALSE
 );
 
+CREATE TABLE applications(
+    username TEXT NOT NULL REFERENCES users ON DELETE CASCADE,
+    job_id INTEGER  REFERENCES jobs ON DELETE CASCADE,
+    state TEXT,
+    created_at TIMESTAMP DEFAULT current_timestamp,
+    PRIMARY KEY(username, job_id)
+);
+
+
 
 -- SAMPLE DATA
 INSERT INTO companies 
@@ -48,6 +57,12 @@ VALUES
  ('data scientist', 200000, 'google',0.01);
 
  INSERT INTO users
- (username, password, first_name, last_name, email)
+ (username, password, first_name, last_name, email, is_admin)
  VALUES
- ('user', 'password', 'John','Doe','johndoe@email.com')
+ ('user', 'password', 'John','Doe','johndoe@email.com','false'),
+ ('admin', 'password', 'Ad','Min','admin@email.com','true');
+
+ INSERT INTO applications
+ (username, job_id)
+ VALUES
+ ('user', 1);

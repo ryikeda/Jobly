@@ -5,7 +5,8 @@ const ExpressError = require("../helpers/expressError");
 const authRequired = (req, res, next) => {
   try {
     const tokenStr = req.body._token;
-    jwt.verify(tokenStr, SECRET_KEY);
+    const token = jwt.verify(tokenStr, SECRET_KEY);
+    res.locals.username = token.username;
     return next();
   } catch (err) {
     return next(new ExpressError("Please login first", 401));
@@ -20,6 +21,7 @@ const adminRequired = (req, res, next) => {
   try {
     const tokenStr = req.body._token;
     const token = jwt.verify(tokenStr, SECRET_KEY);
+    res.locals.username = token.username;
     if (token.is_admin) {
       return next();
     }
@@ -34,6 +36,7 @@ const confirmUser = (req, res, next) => {
     const tokenStr = req.body._token;
 
     let token = jwt.verify(tokenStr, SECRET_KEY);
+    res.locals.username = token.username;
 
     if (token.username === req.params.username) {
       return next();

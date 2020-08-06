@@ -65,6 +65,15 @@ class User {
     if (!user)
       throw new ExpressError(`No user found under username: ${username}`, 404);
 
+    const applicationsRes = await db.query(
+      `SELECT j.title, j.company_handle, a.state 
+        FROM applications AS a
+          JOIN jobs AS j ON j.id = a.job_id
+        WHERE a.username = $1`,
+      [username]
+    );
+
+    user.jobs = applicationsRes.rows;
     return user;
   }
   static async register(data) {

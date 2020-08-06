@@ -93,6 +93,17 @@ class Job {
       throw new ExpressError(`No job found under id :${id}`, 404);
   }
 
+  static async apply(id, username, state) {
+    const result = await db.query(
+      `INSERT INTO applications (job_id, username, state)
+        VALUES ($1, $2, $3) RETURNING job_id`,
+      [id, username, state]
+    );
+
+    if (!result.rows.length)
+      throw new ExpressError(`No job found under id :${id}`, 404);
+  }
+
   static mapJobs(results) {
     return results.rows.map(
       (job) =>

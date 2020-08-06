@@ -27,7 +27,7 @@ router.get("/:id", authRequired, async (req, res, next) => {
   }
 });
 
-// POST route
+// POST routes
 // Creates a new job
 router.post("/", adminRequired, async (req, res, next) => {
   try {
@@ -40,6 +40,16 @@ router.post("/", adminRequired, async (req, res, next) => {
     }
     const job = await Job.create(req.body);
     return res.status(201).json({ job });
+  } catch (err) {
+    return next(err);
+  }
+});
+// Updates state of application
+router.post("/:id/apply", authRequired, async (req, res, next) => {
+  try {
+    const state = req.body.state || "applied";
+    await Job.apply(req.params.id, res.locals.username, state);
+    return res.json({ message: state });
   } catch (err) {
     return next(err);
   }
